@@ -391,10 +391,10 @@ Export the run as an HTML report via Electron's save dialog, or browse all past 
 ---
 ## Demo & Video
 
-- Live Demo Link: https://drive.google.com/file/d/1A5KHqkpnqVPQvqBYRpMyFDxDaaodC1O2/view?usp=sharing
+- Live Demo Link: [https://drive.google.com/file/d/1A5KHqkpnqVPQvqBYRpMyFDxDaaodC1O2/view?usp=sharing](https://drive.google.com/file/d/19cIgaxvfNjuqZrNpfWRWFRp0C8wd4gkp/view?usp=sharing)
 - Demo Video Link: https://drive.google.com/file/d/1aM4_4vFoQjqOeocHhEqgW2HY0UFZypPd/view?usp=sharing
 - GitHub Repository: https://github.com/HirdyanshKumar/ApexLoad
-- PPT Link: https://docs.google.com/presentation/d/13x3DHzNhdU9jqUc1xS-g5H6PtHNzI-aj/edit?usp=sharing&ouid=102378410138069245697&rtpof=true&sd=true
+- PPT Link: https://docs.google.com/presentation/d/1HZ-ri667hYAUtp33sad58Xv1OEcGlpd3/edit?usp=sharing&ouid=102378410138069245697&rtpof=true&sd=true
 ---
 ## Hackathon Deliverables Summary
 
@@ -449,6 +449,7 @@ Export the run as an HTML report via Electron's save dialog, or browse all past 
 - **Closes the diagnosis gap** — teams get actionable, plain-English bottleneck analysis instead of raw numbers, reducing the time from test results to fix.
 - **Keeps sensitive API traffic private** — local-first execution means internal endpoints, auth headers, and request payloads never leave the developer's machine.
 - **Accelerates pre-release confidence** — with a fast setup, real-time monitoring, and AI-guided insights, teams can integrate load testing into their regular development cycle rather than treating it as a late-stage or one-off exercise.
+
 
 
 
