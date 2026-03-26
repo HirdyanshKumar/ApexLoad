@@ -57,61 +57,81 @@ export function HistoryPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col gap-3">
-            <h2 className="text-lg font-bold text-white mb-2">Test History</h2>
-            {results.map((r: any) => {
-                const stats = r.statsJson ? JSON.parse(r.statsJson) : null;
-                const config = r.config?.configJson ? JSON.parse(r.config.configJson) : null;
-                return (
-                    <div key={r.id} className="bg-[#1e293b] border border-[#334155] rounded-xl p-4">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="font-semibold text-white">{r.config?.name || 'Unknown'}</p>
-                                <p className="text-xs text-[#64748b] mt-0.5">{config?.url} · {new Date(r.startedAt).toLocaleString()}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className={`text-xs px-2 py-1 rounded-full ${r.status === 'completed' ? 'bg-emerald-900 text-emerald-400' : 'bg-red-900 text-red-400'}`}>
-                                    {r.status}
-                                </span>
-                            </div>
-                        </div>
-                        {stats && (
-                            <div className="mt-3 flex flex-col gap-3">
-                                <div className="grid grid-cols-4 gap-3">
-                                    {[
-                                        { label: 'Requests', value: stats.totalRequests || 0 },
-                                        { label: 'Throughput', value: `${(stats.throughput || 0).toFixed(1)} rps` },
-                                        { label: 'P99', value: `${stats.latency?.p99 || 0}ms` },
-                                        { label: 'Errors', value: `${((stats.errorRate || 0) * 100).toFixed(1)}%` },
-                                    ].map(item => (
-                                        <div key={item.label} className="bg-[#0f172a] rounded-lg p-2 text-center">
-                                            <p className="text-xs text-[#64748b]">{item.label}</p>
-                                            <p className="text-sm font-bold text-[#38bdf8]">{item.value}</p>
-                                        </div>
-                                    ))}
+        <div className="w-full flex flex-col">
+            <h2 className="text-[13px] font-semibold text-[#F0F0F0] mb-4">Test History</h2>
+
+            <div className="flex flex-col">
+                <div className="grid grid-cols-12 px-4 py-3 bg-[#080808] text-[#444444] text-[11px] tracking-widest uppercase border-b border-[#1E1E1E] items-center">
+                    <div className="col-span-3">Test Name & URL</div>
+                    <div className="col-span-2">Date</div>
+                    <div className="col-span-1">Status</div>
+                    <div className="col-span-1 text-center">Reqs</div>
+                    <div className="col-span-1 text-center">RPS</div>
+                    <div className="col-span-1 text-center">P99</div>
+                    <div className="col-span-1 text-center">Errors</div>
+                    <div className="col-span-2 text-right">Actions</div>
+                </div>
+
+                <div className="flex flex-col">
+                    {results.map((r: any) => {
+                        const stats = r.statsJson ? JSON.parse(r.statsJson) : null;
+                        const config = r.config?.configJson ? JSON.parse(r.config.configJson) : null;
+                        const errorCount = stats?.errorRate ? (stats.errorRate * 100) : 0;
+                        const errorColor = errorCount > 0 ? "text-[#FF2D55]" : "text-[#444444]";
+
+                        return (
+                            <div key={r.id} className="grid grid-cols-12 px-4 py-3 bg-transparent border-b border-[#111111] hover:bg-[#0F0F0F] transition-colors duration-100 items-center">
+                                <div className="col-span-3 flex flex-col">
+                                    <p className="font-semibold text-[13px] text-[#F0F0F0]">{r.config?.name || 'Unknown'}</p>
+                                    <p className="text-[11px] text-[#888888] mt-0.5 max-w-[200px] truncate">{config?.url}</p>
+                                </div>
+                                <div className="col-span-2">
+                                    <p className="text-[13px] text-[#888888]">{new Date(r.startedAt).toLocaleString()}</p>
+                                </div>
+                                <div className="col-span-1">
+                                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded ${r.status === 'completed' ? 'bg-[#00E5A0]/10 text-[#00E5A0]' : 'bg-[#FF2D55]/10 text-[#FF2D55]'}`}>
+                                        {r.status}
+                                    </span>
                                 </div>
 
-                                {/* Export Actions */}
-                                <div className="flex items-center gap-2 pt-2 border-t border-[#334155]">
-                                    <button
-                                        onClick={() => handleExportHTML(config, stats)}
-                                        className="flex flex-1 items-center justify-center gap-2 bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 border border-[#38bdf8]/30 px-3 py-1.5 rounded text-xs font-semibold text-[#38bdf8] transition-colors"
-                                    >
-                                        <FileDown className="w-3.5 h-3.5" /> HTML Report
-                                    </button>
+                                <div className="col-span-1 text-center text-[13px] font-mono text-[#F0F0F0]">
+                                    {stats?.totalRequests || 0}
+                                </div>
+                                <div className="col-span-1 text-center text-[13px] font-mono text-[#F0F0F0]">
+                                    {(stats?.throughput || 0).toFixed(1)}
+                                </div>
+                                <div className="col-span-1 text-center text-[13px] font-mono text-[#F0F0F0]">
+                                    {stats?.latency?.p99 || 0}
+                                </div>
+                                <div className={`col-span-1 text-center text-[13px] font-mono ${errorColor}`}>
+                                    {errorCount.toFixed(1)}%
+                                </div>
 
-                                    <button
-                                        onClick={() => handleExportAI(r.ai_analysis || (stats && JSON.stringify(stats, null, 2)))}
-                                        className="flex flex-1 items-center justify-center gap-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 rounded text-xs font-semibold text-purple-400 transition-colors"
-                                    >
-                                        <Bot className="w-3.5 h-3.5" /> AI Analysis
-                                    </button>
+                                <div className="col-span-2 flex items-center justify-end gap-2">
+                                    {stats && (
+                                        <>
+                                            <button
+                                                onClick={() => handleExportHTML(config, stats)}
+                                                className="flex justify-center items-center p-1.5 border border-[#222222] hover:border-[#2C2C2C] bg-transparent hover:bg-[#1E1E1E] text-[#888888] hover:text-[#F0F0F0] rounded-md transition-colors duration-150 cursor-pointer"
+                                                title="HTML Report"
+                                            >
+                                                <FileDown className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleExportAI(r.ai_analysis || JSON.stringify(stats, null, 2))}
+                                                className="flex justify-center items-center p-1.5 border border-[#00D4FF]/30 hover:border-[#00D4FF]/60 bg-transparent hover:bg-[#00D4FF]/10 text-[#00D4FF] rounded-md transition-colors duration-150 cursor-pointer"
+                                                title="AI Analysis"
+                                            >
+                                                <Bot className="w-4 h-4" />
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                        )}
-                    </div>
-                );
-            })}
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 }

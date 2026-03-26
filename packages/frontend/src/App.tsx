@@ -13,7 +13,16 @@ function App() {
 
   return (
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-      {activeTab === 'configure' && <ConfigForm onSend={send} />}
+      {activeTab === 'configure' && (
+        <ConfigForm
+          onSend={(type, payload) => {
+            send(type, payload);
+            if (type === 'START_TEST') {
+              setActiveTab('monitor');
+            }
+          }}
+        />
+      )}
       {activeTab === 'monitor' && <MonitorPage />}
       {activeTab === 'results' && <ResultsPage />}
       {activeTab === 'history' && <HistoryPage />}

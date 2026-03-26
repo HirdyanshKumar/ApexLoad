@@ -11,9 +11,9 @@ interface AIAnalystPanelProps {
 }
 
 const SEVERITY_CONFIG = {
-    healthy: { icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-900/20 border-emerald-600/30', label: 'Healthy' },
-    warning: { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-900/20 border-amber-600/30', label: 'Warning' },
-    critical: { icon: XCircle, color: 'text-red-400', bg: 'bg-red-900/20 border-red-600/30', label: 'Critical' },
+    healthy: { icon: CheckCircle, color: 'text-[#00E5A0]', border: 'border-l-[#00E5A0]', badge: 'bg-[#00E5A0]/10 text-[#00E5A0]', label: 'Healthy' },
+    warning: { icon: AlertTriangle, color: 'text-[#FFD60A]', border: 'border-l-[#FFD60A]', badge: 'bg-[#FFD60A]/10 text-[#FFD60A]', label: 'Warning' },
+    critical: { icon: XCircle, color: 'text-[#FF2D55]', border: 'border-l-[#FF2D55]', badge: 'bg-[#FF2D55]/10 text-[#FF2D55]', label: 'Critical' },
 };
 
 export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
@@ -69,32 +69,32 @@ export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
                 }
             }
         } catch (err: any) {
-            appendAiStreamText(`\n\n❌ Analysis failed: ${err.message}`);
+            appendAiStreamText(`\n\nAnalysis failed: ${err.message}`);
         } finally {
             setAiStreaming(false);
         }
     }, [config, stats, setAiStreaming, clearAiStreamText, setAiAnalysis, appendAiStreamText]);
 
     const severityConfig = aiAnalysis
-        ? SEVERITY_CONFIG[aiAnalysis.severity]
+        ? SEVERITY_CONFIG[aiAnalysis.severity as keyof typeof SEVERITY_CONFIG]
         : SEVERITY_CONFIG.warning;
 
     return (
-        <div className={`rounded-xl border overflow-hidden transition-all ${aiAnalysis ? severityConfig.bg : 'bg-[#1e293b] border-[#334155]'
+        <div className={`bg-[#0F0F0F] rounded-lg border border-[#1E1E1E] border-l-4 overflow-hidden transition-colors duration-150 ${aiAnalysis ? severityConfig.border : 'border-l-[#00D4FF]'
             }`}>
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2">
-                    <BrainCircuit className={`w-5 h-5 ${aiAnalysis ? severityConfig.color : 'text-[#38bdf8]'}`} />
-                    <span className="font-semibold text-sm text-white">🤖 AI Bottleneck Analyst</span>
+                    <BrainCircuit className={`w-5 h-5 ${aiAnalysis ? severityConfig.color : 'text-[#00D4FF]'}`} />
+                    <span className="text-[#00D4FF] text-[12px] font-medium tracking-widest uppercase">AI Bottleneck Analyst</span>
                     {aiAnalysis && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full border ${severityConfig.bg} ${severityConfig.color} font-medium`}>
+                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded ${severityConfig.badge}`}>
                             {severityConfig.label}
                         </span>
                     )}
                     {aiStreaming && (
-                        <span className="flex items-center gap-1 text-xs text-[#38bdf8] animate-pulse">
-                            <Loader2 className="w-3 h-3 animate-spin" /> Analyzing...
+                        <span className="flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded bg-[#00D4FF]/10 text-[#00D4FF] animate-pulse">
+                            <Loader2 className="w-3 h-3 animate-spin" /> Analyzing
                         </span>
                     )}
                 </div>
@@ -102,14 +102,14 @@ export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
                     {!aiStreaming && (
                         <button
                             onClick={runAnalysis}
-                            className="flex items-center gap-1.5 bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 border border-[#38bdf8]/30 text-[#38bdf8] text-xs font-semibold px-3 py-1.5 rounded-lg transition-all"
+                            className="flex items-center gap-2 bg-transparent hover:bg-[#00D4FF]/10 border border-[#00D4FF]/30 hover:border-[#00D4FF]/60 text-[#00D4FF] text-[13px] font-medium px-4 py-2 rounded-md transition-colors duration-150"
                         >
-                            <BrainCircuit className="w-3.5 h-3.5" />
-                            {hasStarted ? 'Re-Analyze' : 'Analyze with Claude'}
+                            <BrainCircuit className="w-4 h-4" />
+                            {hasStarted ? 'Re-Analyze' : 'Analyze'}
                         </button>
                     )}
                     {hasStarted && (
-                        <button onClick={() => setExpanded(!expanded)} className="text-[#64748b] hover:text-white">
+                        <button onClick={() => setExpanded(!expanded)} className="text-[#444444] hover:text-[#888888] px-2 py-2">
                             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                     )}
@@ -122,22 +122,22 @@ export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
                     {/* Structured Issues & Suggestions (shown after stream completes) */}
                     {aiAnalysis && aiAnalysis.detectedIssues.length > 0 && (
                         <div className="mb-3 grid grid-cols-2 gap-3">
-                            <div className="bg-[#0f172a]/60 rounded-lg p-3">
-                                <p className="text-xs text-[#64748b] uppercase tracking-wider font-semibold mb-2">Issues Detected</p>
+                            <div className="bg-[#161616] border border-[#222222] rounded-lg p-3">
+                                <p className="text-[11px] font-medium tracking-widest uppercase text-[#444444] mb-2">Issues Detected</p>
                                 <ul className="flex flex-col gap-1">
                                     {aiAnalysis.detectedIssues.map((issue, i) => (
-                                        <li key={i} className="flex items-start gap-1.5 text-xs text-red-300">
-                                            <span className="text-red-400 mt-0.5 shrink-0">•</span>{issue}
+                                        <li key={i} className="flex items-start gap-1.5 text-[13px] text-[#FF2D55]">
+                                            <span className="text-[#FF2D55] mt-0.5 shrink-0">•</span>{issue}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-                            <div className="bg-[#0f172a]/60 rounded-lg p-3">
-                                <p className="text-xs text-[#64748b] uppercase tracking-wider font-semibold mb-2">Recommended Actions</p>
+                            <div className="bg-[#161616] border border-[#222222] rounded-lg p-3">
+                                <p className="text-[11px] font-medium tracking-widest uppercase text-[#444444] mb-2">Recommended Actions</p>
                                 <ul className="flex flex-col gap-1">
                                     {aiAnalysis.suggestions.map((sug, i) => (
-                                        <li key={i} className="flex items-start gap-1.5 text-xs text-emerald-300">
-                                            <span className="text-emerald-400 mt-0.5 shrink-0">→</span>{sug}
+                                        <li key={i} className="flex items-start gap-1.5 text-[13px] text-[#00E5A0]">
+                                            <span className="text-[#00E5A0] mt-0.5 shrink-0">→</span>{sug}
                                         </li>
                                     ))}
                                 </ul>
@@ -146,14 +146,14 @@ export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
                     )}
 
                     {/* Full streaming markdown text */}
-                    <div className="bg-[#0f172a]/40 rounded-lg p-4 font-mono text-xs text-[#cbd5e1] leading-relaxed whitespace-pre-wrap max-h-72 overflow-y-auto">
-                        {aiStreamText || (aiStreaming ? <span className="text-[#38bdf8] animate-pulse">Claude is thinking...</span> : null)}
+                    <div className="bg-[#161616] border border-[#222222] rounded-md p-4 font-mono text-[12px] text-[#888888] leading-relaxed whitespace-pre-wrap max-h-72 overflow-y-auto">
+                        {aiStreamText ? <span className="text-[#F0F0F0]">{aiStreamText}</span> : (aiStreaming ? <span className="text-[#00D4FF] animate-pulse">AI is thinking...</span> : null)}
                         {/* Blinking cursor while streaming */}
-                        {aiStreaming && <span className="inline-block w-2 h-3 bg-[#38bdf8] ml-0.5 animate-pulse" />}
+                        {aiStreaming && <span className="inline-block w-2 h-3 bg-[#00D4FF] ml-0.5 animate-pulse" />}
                     </div>
 
                     {aiAnalysis && (
-                        <p className="text-xs text-[#475569] mt-2">
+                        <p className="text-[12px] text-[#444444] mt-2">
                             Analysis generated at {new Date(aiAnalysis.generatedAt).toLocaleTimeString()}
                         </p>
                     )}
@@ -162,8 +162,8 @@ export function AIAnalystPanel({ config, stats }: AIAnalystPanelProps) {
 
             {/* Initial CTA (before first analysis) */}
             {!hasStarted && (
-                <div className="px-4 pb-4 text-xs text-[#475569]">
-                    Click "Analyze with Claude" to get an AI-powered diagnosis of your test results — Claude will identify bottlenecks, explain root causes, and suggest fixes.
+                <div className="px-4 pb-4 text-[13px] text-[#888888]">
+                    Click "Analyze" to get an AI-powered diagnosis of your test results — AI will identify bottlenecks, explain root causes, and suggest fixes.
                 </div>
             )}
         </div>
